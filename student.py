@@ -1,12 +1,15 @@
 #Making a student class with id, fname, lname and gender as their attributes
 class Student:
 
-    def __init__(self, studentid, firstname, lastname, gender, picture):
+    def __init__(self, studentid, firstname, lastname, gender, picturepath, present, absent):
         self.__studentid = studentid
         self.__firstname = firstname
         self.__lastname = lastname
         self.__gender = gender
-        self.__picture = picture
+        self.__picturepath = picturepath
+        self.__present = present
+        self.__absent = absent
+    
 
     #Using property decorator as getter and setter of the class attributes
 
@@ -34,10 +37,22 @@ class Student:
     @gender.setter
     def gender(self, value): self.__gender = value
 
-    #picture getter setter
+    #picturepath getter setter
     @property
-    def picture(self): return self.__picture
-    @picture.setter
-    def picture(self, value): self.__picture = value
+    def picturepath(self): return self.__picturepath
+    @picturepath.setter
+    def picture(self, value): self.__picturepath = value
 
-    
+    #present getter setter
+    @property
+    def present(self): return self.__present
+    @present.setter
+    def present(self, value): self.__present = value
+
+     #absent getter setter
+    @property
+    def absent(self): return self.__absent
+    @absent.setter
+    def absent(self, value): self.__absent = value
+
+            

@@ -38,7 +38,7 @@ known_face_names = [
     "Chandler Bing"
 ]
 
-test_image = face_recognition.load_image_file('./group/group_3.jpg')
+test_image = face_recognition.load_image_file('./group/group_1.jpg')
 
 face_locations = face_recognition.face_locations(test_image)
 face_encodings = face_recognition.face_encodings(test_image, face_locations)
