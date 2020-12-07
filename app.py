@@ -2,7 +2,8 @@ from tkinter import *
 from tkinter import messagebox, ttk, filedialog
 from PIL import ImageTk, Image
 import os
-import sqlite3
+import query_functions
+from student import Student
 
 class Menu():
 
@@ -16,14 +17,55 @@ class Menu():
         #open file dialog
         def open():
             root.filename = filedialog.askopenfilename(initialdir="/desktop", title="Select the picture", filetypes=(("png files", "*.png"),("jpeg files", "*.jpeg"),("jpg files", "*.jpg")))
-            picturepath_text.insert(END, root.filename)
+
 
         def open_first():
             root.filename = filedialog.askopenfilename(initialdir="/desktop", title="Select the picture", filetypes=(("png files", "*.png"),("jpeg files", "*.jpeg"),("jpg files", "*.jpg")))
+            picturepath_text.delete(0,END)
             picturepath_text.insert(END, root.filename)
-            
+
+        def add_new():
+            new_student = Student(studentid.get(), firstname.get(), lastname.get(), gender.get(), picturepath.get(), present.get(), absent.get())
+            check = new_student.validate_studentid()
+            if check != None:
+                messagebox.showerror(title="Error", message=check)
+                return
+            check = new_student.validate_name()
+            if check != None:
+                messagebox.showerror(title="Error", message=check)
+                return
+            check = new_student.validate_new_number()
+            if check != None:
+                messagebox.showerror(title="Error", message=check)
+                return
+            new_student.picture_saving()
+            query_functions.add_new_data(new_student.studentid, new_student.firstname, new_student.lastname, new_student.gender, new_student.picturepath, new_student.present, new_student.absent)
+            messagebox.showinfo(title="Successfully saved!", message=f"Data of {new_student.get_full_name()} has been successfully saved!")
             
 
+
+        def clear_data():
+            studentid_text.delete(0,END)
+            firstname_text.delete(0,END)
+            lastname_text.delete(0,END)
+            gender_combobox.set('')
+            picturepath_text.delete(0,END)
+            present_text.delete(0,END)
+            present_text.insert(END, 0)
+            absent_text.delete(0,END)
+            absent_text.insert(END, 0)
+
+
+        #Variables
+        studentid = StringVar()
+        firstname = StringVar()
+        lastname = StringVar()
+        gender = StringVar()
+        picturepath = StringVar()
+        present = IntVar()
+        absent = IntVar()     
+
+        #Title of the app
         titlelbl = Label(self.__root, font=("Helvetica", 40, "bold"), bd =3, text = "Cool School Attendance System", relief=GROOVE, bg = "sky blue")
         titlelbl.pack(side=TOP, fill=X)
 
@@ -37,56 +79,50 @@ class Menu():
 
         studentid_label = Label(entry_frame, text = "Student ID:",bg="light gray", font=("Helvetica", 16, "bold"))
         studentid_label.grid(row=1, column=0, pady=5, padx=20, sticky="w")
-        studentid_text = Entry(entry_frame, font=("Helvetica", 16), bd=3, relief=GROOVE)
+        studentid_text = Entry(entry_frame, font=("Helvetica", 16), bd=3, relief=GROOVE, textvariable = studentid)
         studentid_text.grid(row=1, column=1, padx=8, pady=5, sticky = "w",columnspan=2)
 
         firstname_label = Label(entry_frame, text = "First Name:",bg="light gray", font=("Helvetica", 16, "bold"))
         firstname_label.grid(row=2, column=0, pady=5, padx=20, sticky="w")
-        firstname_text = Entry(entry_frame, font=("Helvetica", 16), bd=3, relief=GROOVE)
+        firstname_text = Entry(entry_frame, font=("Helvetica", 16), bd=3, relief=GROOVE, textvariable = firstname)
         firstname_text.grid(row=2, column=1, padx=8, pady=5, sticky = "w",columnspan=2)
 
         lastname_label = Label(entry_frame, text = "Last Name:",bg="light gray", font=("Helvetica", 16, "bold"))
         lastname_label.grid(row=3, column=0, pady=5, padx=20, sticky="w")
-        lastname_text = Entry(entry_frame, font=("Helvetica", 16), bd=3, relief=GROOVE)
+        lastname_text = Entry(entry_frame, font=("Helvetica", 16), bd=3, relief=GROOVE, textvariable = lastname)
         lastname_text.grid(row=3, column=1, padx=8, pady=5, sticky = "w",columnspan=2)
 
         gender_label = Label(entry_frame, text = "Gender:",bg="light gray", font=("Helvetica", 16, "bold"))
         gender_label.grid(row=4, column=0, pady=5, padx=20, sticky="w")
-        gender_combobox = ttk.Combobox(entry_frame, font=("Helvetica", 15), state="readonly")
+        gender_combobox = ttk.Combobox(entry_frame, font=("Helvetica", 15), state="readonly", textvariable = gender)
         gender_combobox['values'] = ("Male", "Female", "Others")
         gender_combobox.grid(row=4, column=1, pady=5,columnspan=2)
 
         picturepath_label = Label(entry_frame, text = "Picture:",bg="light gray", font=("Helvetica", 16, "bold"))
         picturepath_label.grid(row=5, column=0, pady=5, padx=20, sticky="w")
-        picturepath_text = Entry(entry_frame, font=("Helvetica", 12), bd=3, relief=GROOVE)
+        picturepath_text = Entry(entry_frame, font=("Helvetica", 12), bd=3, relief=GROOVE, textvariable = picturepath)
         picturepath_text.grid(row=5, column=1, padx=8, pady=5, sticky = "w")
         picturepath_button = Button(entry_frame, text="Choose", command=open_first)
         picturepath_button.grid(row=5, column=2, pady=5)
 
         present_label = Label(entry_frame, text = "Present:",bg="light gray", font=("Helvetica", 16, "bold"))
         present_label.grid(row=6, column=0, pady=5, padx=20, sticky="w")
-        present_text = Entry(entry_frame, font=("Helvetica", 16), bd=3, relief=GROOVE)
+        present_text = Entry(entry_frame, font=("Helvetica", 16), bd=3, relief=GROOVE, textvariable = present)
         present_text.grid(row=6, column=1, padx=8, pady=5, sticky = "w",columnspan=2)
-        present_text.insert(END, 0)
+        
 
         absent_label = Label(entry_frame, text = "Absent:",bg="light gray", font=("Helvetica", 16, "bold"))
         absent_label.grid(row=7, column=0, pady=5, padx=20, sticky="w")
-        absent_text = Entry(entry_frame, font=("Helvetica", 16), bd=3, relief=GROOVE)
+        absent_text = Entry(entry_frame, font=("Helvetica", 16), bd=3, relief=GROOVE, textvariable = absent)
         absent_text.grid(row=7, column=1, padx=8, pady=5, sticky = "w",columnspan=2)
-        absent_text.insert(END, 0)
         
-
-        lastname_label = Label(entry_frame, text = "Last Name:",bg="light gray", font=("Helvetica", 16, "bold"))
-        lastname_label.grid(row=3, column=0, pady=5, padx=20, sticky="w")
-        lastname_text = Entry(entry_frame, font=("Helvetica", 16), bd=3, relief=GROOVE)
-        lastname_text.grid(row=3, column=1, padx=8, pady=5, sticky = "w",columnspan=2)
         
 
         #Button Frame
         button_frame = Frame(entry_frame, bd=0, relief=RIDGE, bg="light gray")
         button_frame.place(x=10, y=500, width=420)
 
-        add_button = Button(button_frame, text="Add", bd=4, width =10)
+        add_button = Button(button_frame, text="Add", bd=4, width =10, command = add_new)
         add_button.grid(row=0, column=0, padx=10)
 
         update_button = Button(button_frame, text="Update", bd=4, width =10)
@@ -95,7 +131,7 @@ class Menu():
         delete_button = Button(button_frame, text="Delete", bd=4, width =10)
         delete_button.grid(row=0, column=2, padx=10)
 
-        clear_button = Button(button_frame, text="Clear", bd=4, width =10)
+        clear_button = Button(button_frame, text="Clear", bd=4, width =10, command = clear_data)
         clear_button.grid(row=0, column=3, padx=10)
 
         #Database frame
@@ -105,7 +141,7 @@ class Menu():
         search_by_label = Label(table_frame, text = "Search by:",bg="light gray", font=("Helvetica", 13, "bold"))
         search_by_label.grid(row=0, column=0, pady=10, padx=20, sticky="w")
         search_by_combobox = ttk.Combobox(table_frame, font=("Helvetica", 10), state="readonly", width=10)
-        search_by_combobox['values'] = ("StudentID", "First Name", "Last Name")
+        search_by_combobox['values'] = ("StudentID", "First Name", "Absent")
         search_by_combobox.grid(row=0, column=1, pady=10)
 
         search_text = Entry(table_frame, font=("Helvetica", 13), bd=3, relief=GROOVE)
