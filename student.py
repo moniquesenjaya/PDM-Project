@@ -65,9 +65,10 @@ class Student:
 
     #Validation
     
-    def validate_empty(self, textbox):
-        if textbox == "":
-            return "Please Fill In All The Required Fields."
+    def validate_empty(self, list_of_textbox):
+        for boxes in list_of_textbox:
+            if boxes == "":
+                return "Please Fill In All The Required Fields."
 
     def validate_studentid(self):
         conn = sqlite3.connect("Cool_School.db")
@@ -85,27 +86,24 @@ class Student:
             return "Invalid StudentID."
 
     def validate_name(self):
-        try:
-            str(self.__firstname[:])
-            str(self.__lastname[:])
-        except:
+        if type(self.__firstname) != str or type(self.__lastname) != str:
             return "Name must be all characters."
 
     def validate_new_number(self):
-        if self.__absent != 0 or self.__present != 0:
+        if self.__absent != "0" or self.__present !="0":
             return "Initial absent and present value should be 0."
 
     def validate_number(self):
-        try:
-            int(self.__absent)
-            int(self.__present)
-        except:
-            return "Number of absent and present should be integer."
+        num = ["0","1","2","3",'4',"5","6","7","8","9"]
+        for i in self.__absent+self.__present:
+            if i not in num:
+                return "Number of absent and present should be integer."
 
     def picture_saving(self):
-        img1 = Image.open(self.__picturepath)
+        path = self.__picturepath
+        img1 = Image.open(path)
         name = self.get_full_name()
-        newpath = f".\known\{name}.jpg"
+        newpath = r".\known\{}.jpg".format(name)
         img1 = img1.save(newpath)
         self.__picturepath = newpath
 
