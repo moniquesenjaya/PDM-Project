@@ -14,11 +14,8 @@ class Menu():
         self.__root.title('Cool School Attendance Application')
         self.__root.geometry("1350x700+0+0")
         self.__root.config(bg="sky blue")
-
+        
         #open file dialog
-        def open():
-            root.filename = filedialog.askopenfilename(initialdir="/desktop", title="Select the picture", filetypes=(("jpeg files", "*.jpeg"),("jpg files", "*.jpg")))
-
 
         def open_first():
             root.filename = filedialog.askopenfilename(initialdir="/desktop", title="Select the picture", filetypes=(("jpeg files", "*.jpeg"),("jpg files", "*.jpg")))
@@ -82,13 +79,14 @@ class Menu():
         present_label.grid(row=6, column=0, pady=5, padx=20, sticky="w")
         present_text = Entry(entry_frame, font=("Helvetica", 16), bd=3, relief=GROOVE, textvariable = self.__present)
         present_text.grid(row=6, column=1, padx=8, pady=5, sticky = "w",columnspan=2)
+        present_text.insert(END, "0")
         
 
         absent_label = Label(entry_frame, text = "Absent:",bg="light gray", font=("Helvetica", 16, "bold"))
         absent_label.grid(row=7, column=0, pady=5, padx=20, sticky="w")
         absent_text = Entry(entry_frame, font=("Helvetica", 16), bd=3, relief=GROOVE, textvariable = self.__absent)
         absent_text.grid(row=7, column=1, padx=8, pady=5, sticky = "w",columnspan=2)
-        
+        absent_text.insert(END, "0")
         
 
         #Button Frame
@@ -126,7 +124,7 @@ class Menu():
         cancel_button = Button(table_frame, text="Cancel", bd=4, width =10, command = self.fetch_data)
         cancel_button.grid(row=0, column=4, padx=10)
 
-        attendance_button = Button(table_frame, text="Attendance", command=open, width=15, bd=4)
+        attendance_button = Button(table_frame, text="Attendance", command=self.open, width=15, bd=4)
         attendance_button.grid(row=0, column=5, padx=10)
 
         #List frame
@@ -207,8 +205,8 @@ class Menu():
                 os.remove(self.__picturepath.get())
                 query_functions.delete_data(self.__studentid.get())
                 messagebox.showinfo(title="Successfully deleted!", message=f"Data of {self.__studentid.get()} has been successfully deleted!")
-                self.clear_data()
                 self.fetch_data()
+                self.clear_data()
             else:
                 return
 
@@ -262,6 +260,11 @@ class Menu():
             for row in query_functions.search_data_by(self.__search_by.get(), self.__search_text.get()):
                 self.__student_table.insert("", END, values=row)
 
+    def open(self):
+        root.filename = filedialog.askopenfilename(initialdir="/desktop", title="Select the picture", filetypes=(("jpg files", "*.jpg"),("jpeg files", "*.jpeg")))
+        check = query_functions.add_attendance(root.filename)
+        messagebox.showinfo(title="Successfully Recorded Attendance!", message=check)
+        self.fetch_data()
 
 
 if __name__ =='__main__':

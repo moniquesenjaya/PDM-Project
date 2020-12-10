@@ -1,6 +1,19 @@
 from PIL import Image, ImageDraw
 import face_recognition
 
+def face_recognition_list(filename):
+    test_image = face_recognition.load_image_file(filename)
+
+    face_locations = face_recognition.face_locations(test_image)
+    face_encodings = face_recognition.face_encodings(test_image, face_locations)
+
+    for face_encoding in face_encodings:
+        matches = face_recognition.compare_faces(known_face_encodings, face_encoding)  
+        name = "Unknown Person"  
+        if True in matches:
+            first_match_index = matches.index(True)
+            name = known_face_names[first_match_index]
+
 image_of_monica = face_recognition.load_image_file('./known/Monica Gellar.png')
 monica_face_encoding = face_recognition.face_encodings(image_of_monica)[0]
 
