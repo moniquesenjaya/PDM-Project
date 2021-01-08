@@ -8,7 +8,6 @@ import os
 
 class Menu():
 
-    
     def __init__(self, root):
         self.__root = root
         self.__root.title('Cool School Attendance Application')
@@ -18,7 +17,7 @@ class Menu():
         #open file dialog
 
         def open_first():
-            root.filename = filedialog.askopenfilename(initialdir="/desktop", title="Select the picture", filetypes=(("jpeg files", "*.jpeg"),("jpg files", "*.jpg")))
+            root.filename = filedialog.askopenfilename(initialdir="/desktop", title="Select the picture", filetypes=(("jpeg files", "*.jpeg"),("jpg files", "*.jpg"),("png files", ".png")))
             picturepath_text.delete(0,END)
             picturepath_text.insert(END, root.filename)
 
@@ -106,6 +105,7 @@ class Menu():
         clear_button.grid(row=0, column=3, padx=10)
 
         #Database frame
+
         table_frame = Frame(self.__root, bd=3, relief=RIDGE, bg="light gray")
         table_frame.place(x=500, y=100, width=800, height=560)
 
@@ -157,6 +157,7 @@ class Menu():
         self.__student_table.bind("<ButtonRelease-1>", self.get_cursor)
         self.fetch_data()
 
+    # FUnction to clear data in the textboxes after entry or update
     def clear_data(self):
         self.__studentid.set("")
         self.__firstname.set("")
@@ -166,6 +167,7 @@ class Menu():
         self.__present.set("0")
         self.__absent.set("0")
 
+    # Function to add a new student with the validation applied and with error messages
     def add_new(self):
         new_student = Student(self.__studentid.get(), self.__firstname.get(), self.__lastname.get(), self.__gender.get(), self.__picturepath.get(), self.__present.get(), self.__absent.get())
         check = new_student.validate_empty([self.__studentid.get(), self.__firstname.get(), self.__lastname.get(), self.__gender.get(), self.__picturepath.get(), self.__present.get(), self.__absent.get()])
@@ -176,10 +178,6 @@ class Menu():
         if check != None:
             messagebox.showerror(title="Error", message=check)
             return
-        # check = new_student.validate_name()
-        # if check != None:
-        #     messagebox.showerror(title="Error", message=check)
-        #     return
         check = new_student.validate_number()
         if check != None:
             messagebox.showerror(title="Error", message=check)
@@ -189,17 +187,20 @@ class Menu():
             messagebox.showerror(title="Error", message=check)
             return
         new_student.picture_saving()
+        # If all the validation is passed, then it will be added to database
         query_functions.add_new_data(new_student.studentid, new_student.firstname, new_student.lastname, new_student.gender, new_student.picturepath, new_student.present, new_student.absent)
         messagebox.showinfo(title="Successfully saved!", message=f"Data of {new_student.get_full_name()} has been successfully saved!")
         self.clear_data()
         self.fetch_data()
-        
+
+    #Function to delete the data    
     def delete_entry(self):
         check = query_functions.check_valid_id(self.__studentid.get())
         if check != None:
             messagebox.showerror(title="Error", message=check)
             return
         else:
+            # Warning message
             answer = messagebox.askyesno("Deleting data", f"Are you sure you want to delete {self.__studentid.get()}'s data?'")
             if answer == True:
                 os.remove(self.__picturepath.get())
@@ -210,6 +211,7 @@ class Menu():
             else:
                 return
 
+    # Function to update the information in the database with validation and error message
     def update_entry(self):
         updated_student = Student(self.__studentid.get(), self.__firstname.get(), self.__lastname.get(), self.__gender.get(), self.__picturepath.get(), self.__present.get(), self.__absent.get())
         check = updated_student.validate_empty([self.__studentid.get(), self.__firstname.get(), self.__lastname.get(), self.__gender.get(), self.__picturepath.get(), self.__present.get(), self.__absent.get()])
@@ -220,28 +222,24 @@ class Menu():
         if check != None:
             messagebox.showerror(title="Error", message=check)
             return
-        # check = updated_student.validate_name()
-        # if check != None:
-        #     messagebox.showerror(title="Error", message=check)
-        #     return
         check = updated_student.validate_number()
         if check != None:
             messagebox.showerror(title="Error", message=check)
             return
+        # If validation is passed then it will be updated, if not, error message is shown
         query_functions.update_data(updated_student.studentid, updated_student.firstname, updated_student.lastname, updated_student.gender, updated_student.picturepath, updated_student.present, updated_student.absent)
         messagebox.showinfo(title="Successfully updated!", message=f"Data of {updated_student.get_full_name()} has been successfully updated!")
         self.clear_data()
         self.fetch_data()
         
-
-    
+    # Fetching all the data in the database (for search functions)
     def fetch_data(self):
         if len(query_functions.view_all_data()) != 0:
             self.__student_table.delete(*self.__student_table.get_children())
             for row in query_functions.view_all_data():
                 self.__student_table.insert("", END, values=row)
 
-
+    # Getting the cursor from the list so that it will be shown in the data entry section when clicked
     def get_cursor(self,ev):
         cursor_row = self.__student_table.focus()
         contents = self.__student_table.item(cursor_row)
@@ -254,12 +252,14 @@ class Menu():
         self.__present.set(row[5])
         self.__absent.set(row[6])
 
+    # Search function applied in the application
     def search(self):
         if len(query_functions.search_data_by(self.__search_by.get(), self.__search_text.get())) != 0:
             self.__student_table.delete(*self.__student_table.get_children())
             for row in query_functions.search_data_by(self.__search_by.get(), self.__search_text.get()):
                 self.__student_table.insert("", END, values=row)
 
+    # Open file dialog function
     def open(self):
         root.filename = filedialog.askopenfilename(initialdir="/desktop", title="Select the picture", filetypes=(("jpg files", "*.jpg"),("jpeg files", "*.jpeg")))
         check = query_functions.add_attendance(root.filename)

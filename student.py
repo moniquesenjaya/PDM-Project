@@ -78,6 +78,8 @@ class Student:
         for item in c.fetchall():
             id_list.append(item[0])
         conn.close()
+
+        # Check if the student id is "SXXXX" where X is int and if it is unique
         if self.__studentid[0] != "S" or len(self.__studentid) != 5 or self.__studentid in id_list:
             return "Invalid StudentID."
         try:
@@ -86,19 +88,24 @@ class Student:
             return "Invalid StudentID."
 
     def validate_name(self):
+        # Check if the student name is string
         if type(self.__firstname) != str or type(self.__lastname) != str:
             return "Name must be all characters."
 
     def validate_new_number(self):
+        # Check if the initial present and absent numbers are 0
         if self.__absent != "0" or self.__present !="0":
             return "Initial absent and present value should be 0."
 
     def validate_number(self):
+        # Check if the present and absent numbers are integers
         num = ["0","1","2","3",'4',"5","6","7","8","9"]
         for i in self.__absent+self.__present:
             if i not in num:
                 return "Number of absent and present should be integer."
 
+
+    # Saving the picture in the known file whenever it is uploaded as student data
     def picture_saving(self):
         path = self.__picturepath
         img1 = Image.open(path)
