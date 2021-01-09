@@ -39,15 +39,6 @@ def view_all_data():
     conn.close()
     return rows
 
-# Function to view the searched data in the database (used when search button is clicked)
-def search_data(studentid = "", firstname = "", absent = ""):
-    conn = sqlite3.connect("Cool_School.db")
-    c = conn.cursor()
-    c.execute("SELECT * from students WHERE studentid=? OR firstname=? OR absent=? ORDER BY studentid", (studentid, firstname, absent))
-    rows = c.fetchall()
-    conn.close()
-    return rows
-
 # Updating data in the database after validation
 def update_data(studentid, firstname, lastname, gender, picturepath, present, absent):
     conn = sqlite3.connect("Cool_School.db")
@@ -63,7 +54,6 @@ def search_data_by(searchby, searchtxt):
     c = conn.cursor()
     c.execute("SELECT * from students WHERE " + str(searchby) + " LIKE '%" + str(searchtxt) + "%' ORDER BY studentid")
     rows = c.fetchall()
-    print(rows)
     conn.close()
     return rows
 

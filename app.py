@@ -4,9 +4,9 @@ from PIL import ImageTk, Image
 import os
 import query_functions
 from student import Student
-import os
 
-class Menu():
+
+class Menu:
 
     def __init__(self, root):
         self.__root = root
@@ -157,7 +157,7 @@ class Menu():
         self.__student_table.bind("<ButtonRelease-1>", self.get_cursor)
         self.fetch_data()
 
-    # FUnction to clear data in the textboxes after entry or update
+    # Function to clear data in the textboxes after entry or update
     def clear_data(self):
         self.__studentid.set("")
         self.__firstname.set("")
@@ -190,7 +190,7 @@ class Menu():
         # If all the validation is passed, then it will be added to database
         query_functions.add_new_data(new_student.studentid, new_student.firstname, new_student.lastname, new_student.gender, new_student.picturepath, new_student.present, new_student.absent)
         messagebox.showinfo(title="Successfully saved!", message=f"Data of {new_student.get_full_name()} has been successfully saved!")
-        self.clear_data()
+        self.clear_data() 
         self.fetch_data()
 
     #Function to delete the data    
