@@ -1,0 +1,4 @@
+tkinter
+pysqlite
+face_recognition
+Pillow
