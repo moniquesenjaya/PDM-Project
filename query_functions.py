@@ -49,7 +49,6 @@ def update_data(studentid, firstname, lastname, gender, picturepath, present, ab
 
 # Searching function that uses category filtering
 def search_data_by(searchby, searchtxt):
-    print(searchtxt)
     conn = sqlite3.connect("Cool_School.db")
     c = conn.cursor()
     c.execute("SELECT * from students WHERE " + str(searchby) + " LIKE '%" + str(searchtxt) + "%' ORDER BY studentid")
